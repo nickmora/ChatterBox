@@ -3,11 +3,11 @@ const db = require("../models"),
 
 module.exports = {
     createUser: (req, res) =>{
-        console.log("hello from User controller")
-        console.log(req.body)
+        // console.log("hello from User controller")
+        // console.log(req.body)
         db.User.create(req.body)
         .then(dbUser=>{
-            console.log(dbUser)
+            res.json(dbUser)
         })
     },
 

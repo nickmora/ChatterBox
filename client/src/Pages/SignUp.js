@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography } from '@material-ui/core';
+import { Redirect } from "react-router-dom"
+import { Avatar, Button, CssBaseline, FormControl, FormControlLabel, Checkbox, Input, InputLabel, Paper, Typography } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import withStyles from '@material-ui/core/styles/withStyles';
 import API from "../utils/API"
@@ -37,36 +38,44 @@ const styles = theme => ({
   },
 });
 
-class SignIn extends React.Component {
+class SignUp extends React.Component {
 
-  
+
   state = {
     email: "",
-    password : "",
+    password: "",
+    redirect: false,
   }
-  
+
+  setRedirect = () => {
+    this.setState({ redirect: true });
+    this.rednerRedirect()
+  }
+
+  rednerRedirect = () => {
+    if (this.state.redirect) {
+      return <Redirect to={"/home"} />
+    }
+  }
+
   handleInputChange = name => event => {
-    this.setState({[name]: event.target.value})
+    this.setState({ [name]: event.target.value })
   }
 
   handleSubmit = event => {
     event.preventDefault();
-    if(!this.state.email||!this.state.password) alert("you succ")
-    else{
-      API.loginUser({
+    if (!this.state.email || !this.state.password) alert("you succ")
+    else {
+      API.createUser({
         email: this.state.email,
         password: this.state.password
+      }).then ((resp) =>{
+        // console.log(this);
+        console.log(resp.data)
+        if(resp.data.email) this.setRedirect();
+        console.log(this.state.redirect)
+        // console.log(this.rednerRedirect)
       })
-      .then(
-        this.setState({
-          email:"",
-          password:"",
-          // redirectTo:"/home"
-        })
-      ).then(response=>{
-        console.log(response)
-      })
-      .then(console.log("heh, nice"))
     }
   }
   render() {
@@ -80,29 +89,29 @@ class SignIn extends React.Component {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Sign Up
         </Typography>
           <form className={classes.form}>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="email">Email Address</InputLabel>
-              <Input 
-                id="email" 
-                name="email" 
-                autoComplete="email" 
+              <Input
+                id="email"
+                name="email"
+                autoComplete="email"
                 autoFocus
-                value = {this.state.email}
-                onChange = {this.handleInputChange("email")}
+                value={this.state.email}
+                onChange={this.handleInputChange("email")}
               />
             </FormControl>
             <FormControl margin="normal" required fullWidth>
               <InputLabel htmlFor="password">Password</InputLabel>
-              <Input 
-                name="password" 
-                type="password" 
-                id="password" 
-                autoComplete="current-password" 
-                value = {this.state.password}
-                onChange = {this.handleInputChange("password")}
+              <Input
+                name="password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={this.state.password}
+                onChange={this.handleInputChange("password")}
               />
             </FormControl>
             <FormControlLabel
@@ -115,12 +124,12 @@ class SignIn extends React.Component {
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick = {this.handleSubmit}
+              onClick={this.handleSubmit}
             >
-              Sign in
+              Sign Up
           </Button>
           </form>
-          <p>or sign up
+          <p>or sign in
           <Button>
               here
           </Button>
@@ -131,8 +140,8 @@ class SignIn extends React.Component {
   }
 }
 
-SignIn.propTypes = {
+SignUp.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SignIn);
+export default withStyles(styles)(SignUp);
